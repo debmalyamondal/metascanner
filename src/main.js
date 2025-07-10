@@ -10,6 +10,34 @@ const firebaseConfig = {
     appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
+// --- NEW HELPER FUNCTION FOR ROBUST API CALLS ---
+async function fetchWithRetry(url, options, retries = 3, delay = 1000) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                // If the error is a server overload (429) or other server error (5xx), we retry
+                if (response.status === 429 || response.status >= 500) {
+                    console.warn(`Attempt ${i + 1} failed with status ${response.status}. Retrying in ${delay / 1000}s...`);
+                    // Throw an error to be caught by the catch block and trigger a retry
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                // For other client-side errors (4xx), don't retry, just fail fast
+                const errorData = await response.json();
+                throw new Error(errorData.error?.message || `API request failed with status ${response.status}`);
+            }
+            return response.json(); // Success!
+        } catch (error) {
+            if (i === retries - 1) { // If this was the last retry
+                console.error("All retry attempts failed.");
+                throw error; // Re-throw the final error
+            }
+            await new Promise(res => setTimeout(res, delay));
+            delay *= 2; // Exponential backoff
+        }
+    }
+}
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
@@ -581,13 +609,14 @@ function exportMetadataAsJson() {
 }
 
 // --- AI Image Analysis Function ---
+// --- AI Image Analysis Function (UPDATED) ---
 async function analyzeImageAI(base64ImageData, locationName, coords) {
     if (!base64ImageData) {
         showMessage("NO IMAGE DATA AVAILABLE FOR AI ANALYSIS.", 'error');
         return;
     }
     aiAnalysisOutput.classList.remove('hidden');
-    aiAnalysisOutput.innerHTML = `<div class="spinner"></div> ANALYZING IMAGE WITH AI...`;
+    aiAnalysisOutput.innerHTML = `<div class="spinner"></div> ANALYZING IMAGE WITH AI... (MAY RETRY IF BUSY)`;
 
     const prompt = `Analyze the content of this image. If GPS coordinates ${coords ? `${coords.lat}, ${coords.lon}` : 'are not available'} and location name "${locationName}" are provided, consider them in your analysis. Describe what you see in the image and how it relates to the given location, if applicable. Be concise and informative.`;
     
@@ -602,21 +631,17 @@ async function analyzeImageAI(base64ImageData, locationName, coords) {
             }],
         };
         const apiKey = import.meta.env.VITE_GEMINI_API_KEY; 
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
-        const response = await fetch(apiUrl, {
+        const fetchOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error?.message || `API request failed with status ${response.status}`);
-        }
-        
-        const result = await response.json();
+        };
 
+        // Use the new robust fetch function instead of the standard fetch
+        const result = await fetchWithRetry(apiUrl, fetchOptions);
+        
         if (result.candidates && result.candidates.length > 0) {
             const text = result.candidates[0].content.parts.map(part => part.text).join("");
             aiAnalysisOutput.innerHTML = `<p><strong>AI ANALYSIS:</strong> ${text}</p>`;
