@@ -84,7 +84,7 @@
           <img src="/assets/icons8-google-maps.svg" alt="Google Maps">
         </button>
         <button id="analyzeImageAIBtn" class="hidden" title="Analyze Image with AI">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bot"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 11v5"/><path d="M9 11v5"/></svg>
+          <i data-lucide="scan-search"></i>
         </button>
       </div>
       <div id="aiAnalysisOutput" class="hidden"></div>
@@ -124,11 +124,27 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-braces mr-2"><path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5c0 1.1.9 2 2 2h1"/><path d="M16 21h1a2 2 0 0 0 2-2v-5a2 2 0 0 1 2-2 2 2 0 0 1-2-2V5a2 2 0 0 0-2-2h-1"/></svg>
             EXPORT JSON
         </button>
-
       </div>
-      
     </div>
   </div> 
+
+  <!-- Chatbot Container -->
+  <div class="chatbot-container">
+      <div class="chatbot-toggle-button" id="chatbotToggle" title="Chat with Metascan AI">
+          <i style="color: white;" data-lucide="bot"></i>
+      </div>
+      <div class="chat-window" id="chatWindow">
+          <div class="chat-header">
+              Metascan AI
+              <button class="close-btn" id="closeChat">×</button>
+          </div>
+          <div class="chat-messages" id="chatMessages"></div>
+          <div class="chat-input-container">
+              <textarea id="chatInput" rows="1" placeholder="Ask about the image..."></textarea>
+              <button id="sendMessageBtn"><i data-lucide="forward"></i></button>
+          </div>
+      </div>
+  </div>
 
   <footer class="footer-section">
     <div style="font-size: 0.75rem; font-family: 'Share Tech Mono', monospace;">METASCANNER © 2025 | MADE WITH ❤️ BY <span style="margin-left: 2px;"><a href="https://github.com/debmalyamondal">TEAM DELTA</a></span></div>
@@ -153,8 +169,14 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  
+  <script src="https://unpkg.com/lucide@latest"></script>
+
   <!-- Custom JavaScript -->
   <script type="module" src="/src/main.js"></script>
+  
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+  </script>
 </body>
 </html>

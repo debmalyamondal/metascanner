@@ -826,7 +826,6 @@ button.hidden { display: none; }
   opacity: 0.15;
 }
 
-/* --- ADDED: Styles for the new delete button --- */
 .history-item-delete {
   position: absolute;
   top: 50%;
@@ -958,6 +957,245 @@ button.hidden { display: none; }
   width: 100%;
   text-align: center;
 }
+
+/* --- START: CHATBOT STYLES --- */
+.chatbot-container { 
+  position: fixed; 
+  bottom: 20px; 
+  right: 20px; 
+  z-index: 1000; 
+  font-family: 'Share Tech Mono', monospace; 
+}
+
+.chatbot-toggle-button { 
+  background-color: #00cc00; 
+  color: #0A0A0A; 
+  border: 1px solid #00ff00; 
+  border-radius: 12px; 
+  width: 56px; 
+  height: 56px; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  cursor: pointer; 
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5); 
+  transform: scale(0); /* Initially hidden */
+  transition: transform 0.3s ease-in-out, background-color 0.2s, box-shadow 0.2s; 
+  /* REMOVED font-size from here */
+}
+
+/* --- ADDED THIS NEW RULE --- */
+/* This directly and reliably sizes the icon */
+.chatbot-toggle-button i,
+.chatbot-toggle-button svg {
+    width: 32px;
+    height: 32px;
+    color: #0A0A0A; /* Ensures icon color is black */
+}
+
+.chatbot-toggle-button.visible {
+  transform: scale(1); /* Visible state */
+}
+
+.chatbot-toggle-button:hover { 
+  background: #00ff00; 
+  box-shadow: 0 0 20px #00ff00; 
+}
+
+.chatbot-toggle-button:active { 
+  transform: scale(0.95); 
+}
+
+.chat-window { 
+  background: #0A0A0A; 
+  border: 1.5px solid #00ff00; 
+  border-radius: 8px; 
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.5); 
+  width: 350px; 
+  height: 450px; 
+  display: flex; 
+  flex-direction: column; 
+  overflow: hidden; 
+  position: absolute; 
+  bottom: 70px; 
+  right: 0; 
+  transform: translateY(10px) scale(0.95); 
+  opacity: 0; 
+  pointer-events: none; 
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); 
+}
+
+.chat-window.open { 
+  opacity: 1; 
+  transform: translateY(0) scale(1); 
+  pointer-events: auto; 
+}
+
+.chat-header { 
+  background: #0A0A0A; 
+  color: #00ff00; 
+  font-family: 'Share Tech Mono', monospace; 
+  font-size: 1.1em; 
+  font-weight: bold; 
+  text-align: left; 
+  padding: 12px 16px; 
+  border-bottom: 1px solid #00aa00; 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  letter-spacing: 1px; 
+  text-shadow: 0 0 4px #00ff00;
+}
+
+.chat-header .close-btn { 
+  
+  background: none; 
+  border: none; 
+  color: #00ff00; 
+  font-size: 1.5em; 
+  cursor: pointer; 
+  padding: 0 5px; 
+  transition: color 0.2s; 
+  line-height: 1;
+}
+.chat-header .close-btn:hover { color: #fff; }
+
+.chat-messages { 
+  flex-grow: 1; 
+  padding: 16px; 
+  overflow-y: auto; 
+  background: #0A0A0A; 
+  border-bottom: 1px solid #00aa00; 
+  scroll-behavior: smooth; 
+  display: flex; 
+  flex-direction: column; 
+}
+
+.message { 
+  margin-bottom: 12px; 
+  padding: 10px 16px; 
+  border-radius: 4px; 
+  max-width: 90%; 
+  word-wrap: break-word; 
+  font-size: 1em; 
+  font-family: 'Share Tech Mono', monospace; 
+  box-shadow: none; 
+  border: none; 
+  line-height: 1.4;
+}
+
+.message.user { 
+  background: #003300; 
+  color: #fff; 
+  align-self: flex-end; 
+  border-right: 3px solid #00ff00; 
+}
+
+.message.bot { 
+  background: #1a1a1a; 
+  color: #e0e0e0; 
+  align-self: flex-start; 
+  border-left: 3px solid #00ff00; 
+}
+
+.message.loading { 
+  background: #111; 
+  color: #00ff00; 
+  font-style: italic; 
+  text-align: left; 
+  display: flex;
+  align-items: center;
+}
+.message.loading .spinner {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.chat-input-container { 
+  display: flex; 
+  padding: 10px 12px; 
+  border-top: 1px solid #00aa00; 
+  background: #0A0A0A; 
+  align-items: center; 
+}
+
+.chat-input-container textarea { 
+  flex-grow: 1; 
+  background: #1a1a1a; 
+  color: #00ff00; 
+  border: 1px solid #00ff00; 
+  border-radius: 4px; 
+  padding: 10px 12px; 
+  font-size: 1em; 
+  font-family: 'Share Tech Mono', monospace; 
+  resize: none; 
+  outline: none; 
+  margin-right: 10px; 
+  max-height: 80px; 
+  box-shadow: none; 
+}
+.chat-input-container textarea::placeholder {
+  color: #00aa00;
+  opacity: 0.7;
+}
+
+.chat-input-container button { 
+  background: #00cc00; 
+  color: #0A0A0A; 
+  border: 1px solid #00ff00; 
+  border-radius: 4px; 
+  width: 40px; 
+  height: 40px; 
+  font-size: 1.2em; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  cursor: pointer; 
+  transition: background 0.2s; 
+  padding: 0;
+  flex-shrink: 0;
+}
+.chat-input-container button:hover { 
+  background: #00ff00; 
+  color: #0A0A0A;
+  transform: none; 
+}
+.chat-input-container button:disabled { 
+  background: #222; 
+  color: #666; 
+  cursor: not-allowed;
+  border-color: #555;
+}
+
+@media (max-width: 400px) { 
+  .chatbot-container { 
+    bottom: 10px; 
+    right: 10px; 
+  } 
+  .chat-window { 
+    width: calc(100vw - 20px); 
+    height: 70vh; 
+    bottom: 70px; 
+    right: 0; 
+    left: auto;
+  } 
+  .chatbot-toggle-button { 
+    width: 50px; 
+    height: 50px;
+    /* REMOVED font-size from here too */
+  }
+  /* --- ADDED THIS RULE FOR MOBILE ICON SIZING --- */
+  .chatbot-toggle-button i,
+  .chatbot-toggle-button svg {
+      width: 28px;
+      height: 28px;
+  }
+  .chat-input-container textarea { max-height: 60px; } 
+  .message { font-size: 0.9em; } 
+}
+
+/* --- END: CHATBOT STYLES --- */
 
 /* Mobile adjustments */
 @media (max-width: 768px) {
